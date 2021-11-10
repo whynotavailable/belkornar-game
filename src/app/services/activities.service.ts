@@ -1,18 +1,39 @@
 import { Injectable } from '@angular/core';
 import {DataService} from "./data.service";
-import {filter, map, Observable, of, single, switchMap} from "rxjs";
+import {combineLatestWith, concatMap, concatWith, filter, map, mergeMap, Observable, of, single, switchMap} from "rxjs";
 import {SchedulerService} from "./scheduler.service";
+import {InventoryService} from "./inventory.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ActivitiesService {
 
-  constructor(private dataService: DataService, private schedulerService: SchedulerService) {
+  constructor(private dataService: DataService, private schedulerService: SchedulerService, private inventoryService: InventoryService) {
     this.schedulerService.completedTasks$
-      .pipe(filter(x => x.taskType === 'activity'))
-      .subscribe(x => {
-        console.log(x);
+      .pipe(
+        filter(x => x.taskType === 'activity'),
+        switchMap(task => of(task)
+          .pipe(
+            switchMap(x => this.getActivity(task.owner)),
+            map(activity => ({task, activity})))),
+      )
+      .subscribe(({task, activity}) => {
+        let inventoryChanges: InventoryChange[] = [];
+
+        for (let input of activity.input || []) {
+          inventoryChanges.push({
+            id: input.id,
+            change: 0 - (input.amount || 1)
+          })
+        }
+        for (let output of activity.output || []) {
+          inventoryChanges.push({
+            id: output.id,
+            change: (output.amount || 1)
+          })
+          inventoryService.tryUpdateInventory(inventoryChanges);
+        }
       })
   }
 

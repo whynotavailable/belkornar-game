@@ -24,3 +24,12 @@ import { ProgressbarModule } from "ngx-bootstrap/progressbar";
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+Array.prototype.first = function (predicate) {
+  return this.filter(predicate)[0] || null;
+}
+
+Array.prototype.remove = function (predicate) {
+  // basically return anything that doesn't match the predicate
+  return this.filter(value => !predicate(value));
+}

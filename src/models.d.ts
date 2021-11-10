@@ -1,6 +1,7 @@
 interface DataFile {
   areas: Area[];
   processes: Process[];
+  items: Item[];
 }
 
 interface ScheduledTask {
@@ -39,6 +40,32 @@ interface Process {
   time?: number;
 }
 
+interface Item {
+  // this is the item id
+  id: string
+  // this is the
+  name: string;
+  cost?: number;
+  type?: 'consumable' | 'material' | 'equipment'
+  slot?: string;
+  kind?: string;
+  stackable?: boolean;
+  requirements?: Requirement[];
+}
+
+// an item in your inventory
+interface InventoryItem extends Item {
+  ordinal: number;
+  // if the item is stackable it only counts as 1 for backpack slots
+  count: number;
+}
+
+interface InventoryChange {
+  id: string;
+  name?: string;
+  change: number;
+}
+
 interface ExpDrop {
   id: string;
   exp: number;
@@ -53,38 +80,7 @@ interface Requirement {
   id: string;
 }
 
-/*
-id: mine_copper
-name: mine copper
-exp:
-  - id: skill__mining
-    exp: 15
-output:
-  - id: item__copper
-requirements:
-  - id: skill__mining
-group: mining
-
----
-
-id: create_copper_bar
-name: create copper bar
-input:
-  - id: item__copper
-output:
-  - id: item__copper_bar
-exp:
-  - id: skill__smithing
-    exp: 15
-requirements:
-  - id: skill__smithing
-group: smithing
-
----
-
-id: smithing
-name: smithing
-groups:
-  - process__create_copper_bar
-
- */
+declare interface Array<T> {
+  first(predicate: (value: T) => boolean): T;
+  remove(predicate: (value: T) => boolean): Array<T>;
+}
