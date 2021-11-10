@@ -1,13 +1,20 @@
 import { Injectable } from '@angular/core';
 import {DataService} from "./data.service";
-import {map, Observable, of, switchMap} from "rxjs";
+import {filter, map, Observable, of, switchMap} from "rxjs";
+import {SchedulerService} from "./scheduler.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ActivitiesService {
 
-  constructor(private dataService: DataService) { }
+  constructor(private dataService: DataService, private schedulerService: SchedulerService) {
+    this.schedulerService.completedTasks$
+      .pipe(filter(x => x.taskType === 'activity'))
+      .subscribe(x => {
+        console.log(x);
+      })
+  }
 
   getActivities(ids: string[]): Observable<Process[]> {
     return this.dataService.data$.pipe(map(data => {
@@ -32,5 +39,10 @@ export class ActivitiesService {
     return this.dataService.data$.pipe(map(data => {
       return data.processes.filter(x => id === x.id)[0] || null;
     }));
+  }
+
+  startActivity(id: string) {
+    this.schedulerService
+      .addRepeatingTask('activity', id, 10);
   }
 }

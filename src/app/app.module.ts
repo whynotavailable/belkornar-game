@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import {HttpClientModule} from "@angular/common/http";
 import { AreaComponent } from './area/area.component';
 import { ActivityComponent } from './activity/activity.component';
+import { ProgressbarModule } from "ngx-bootstrap/progressbar";
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { ActivityComponent } from './activity/activity.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    ProgressbarModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

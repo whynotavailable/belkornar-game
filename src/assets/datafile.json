@@ -129,7 +129,7 @@
   "areas": [
     {
       "id": "area__basic_village",
-      "name": "basic village",
+      "name": "Basic Village",
       "people": [
         "people__hat_seller"
       ],

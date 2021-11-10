@@ -1,5 +1,8 @@
-<div class="col-md-4">
-  <div *ngFor="let activity of activities" class="card">
-    <div class="card-body">{{activity.name}}</div>
+<div class="row content">
+  <div *ngFor="let activity of activities" class="col-md-4">
+    <div (click)="startActivity(activity.id)" class="card" [class.border-primary]="activity.id === currentActivity">
+      <div class="card-body">{{activity.name}}</div>
+      <progressbar [value]="getProgress(activity.id)" [animate]="true" [striped]="true"></progressbar>
+    </div>
   </div>
 </div>
