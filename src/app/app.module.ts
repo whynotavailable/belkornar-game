@@ -7,12 +7,14 @@ import {HttpClientModule} from "@angular/common/http";
 import { AreaComponent } from './area/area.component';
 import { ActivityComponent } from './activity/activity.component';
 import { ProgressbarModule } from "ngx-bootstrap/progressbar";
+import { InventoryComponent } from './inventory/inventory.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AreaComponent,
     ActivityComponent,
+    InventoryComponent,
   ],
   imports: [
     BrowserModule,

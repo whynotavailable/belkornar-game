@@ -1,0 +1,13 @@
+<div class="row content">
+  <div class="col-md-4">
+    <div *ngFor="let item of inventory" class="card">
+      <div class="card-body">
+        {{item.name}}<br/>
+        Count: {{item.count}}
+      </div>
+    </div>
+    <div *ngIf="inventory.length === 0">
+      Nothing here but cobwebs...
+    </div>
+  </div>
+</div>

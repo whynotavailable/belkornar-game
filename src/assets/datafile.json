@@ -2,7 +2,7 @@
   "items": [
     {
       "id": "item__hat",
-      "name": "hat",
+      "name": "Hat",
       "cost": 15,
       "type": "equipment",
       "slot": "head",
@@ -16,11 +16,11 @@
     },
     {
       "id": "item__copper",
-      "name": "copper"
+      "name": "Copper"
     },
     {
       "id": "item__copper_bar",
-      "name": "copper bar",
+      "name": "Copper Bar",
       "cost": 15
     }
   ],

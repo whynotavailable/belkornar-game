@@ -10,7 +10,7 @@ export class InventoryService {
   maxSlots = 5; // make this changable via equipment later
   inventory: InventoryItem[] = []
 
-  inventoryChanges: Subject<InventoryChange[]> = new Subject<InventoryChange[]>()
+  inventoryChanges$: Subject<InventoryChange[]> = new Subject<InventoryChange[]>()
 
   constructor(private itemService: ItemService, private schedulerService: SchedulerService) { }
 
@@ -18,8 +18,8 @@ export class InventoryService {
     this.getTemporaryInventory(changes)
       .subscribe({
         next: (inventory: InventoryItem[]) => {
-          console.log('here and now');
           this.inventory = inventory;
+          this.inventoryChanges$.next(changes);
         },
         error: err => {
           this.cancelChange(err)
@@ -65,8 +65,6 @@ export class InventoryService {
             newInventory.push(newInventoryItem);
           }
         }
-
-
 
         let usedSlots = 0;
 
