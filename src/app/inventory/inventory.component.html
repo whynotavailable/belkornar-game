@@ -1,13 +1,25 @@
-<div class="row content">
-  <div class="col-md-4">
-    <div *ngFor="let item of inventory" class="card">
-      <div class="card-body">
-        {{item.name}}<br/>
-        Count: {{item.count}}
-      </div>
-    </div>
-    <div *ngIf="inventory.length === 0">
-      Nothing here but cobwebs...
-    </div>
+<div class="d-flex batch-selector">
+  <select [(ngModel)]="amountMode" class="p-2 form-control">
+    <option [value]="'all'">All</option>
+    <option [value]="'10'">10x</option>
+    <option [value]="'custom'">Custom Amount</option>
+  </select>
+  <div class="p-2"></div>
+  <ng-container *ngIf="amountMode === 'custom'">
+    <input [(ngModel)]="amountCustom" placeholder="amount" type="text" class="p-2 form-control">
+  </ng-container>
+</div>
+<div *ngFor="let item of inventory" class="card" [class.border-primary]="isItemSelected(item.id)">
+  <div class="card-body">
+    {{item.name}}<br/>
+    Count: {{item.count}}
   </div>
+  <div class="card-footer">
+    <button (click)="selectItem(item.id)" class="btn btn-primary">Select</button>
+    <button *ngIf="item.type === 'equipment'" class="btn btn-secondary">Equip</button>
+    <button (click)="dropItem(item.id)" class="btn btn-danger">Drop</button>
+  </div>
+</div>
+<div *ngIf="inventory.length === 0">
+  Nothing here but cobwebs...
 </div>

@@ -8,6 +8,8 @@ import { AreaComponent } from './area/area.component';
 import { ActivityComponent } from './activity/activity.component';
 import { ProgressbarModule } from "ngx-bootstrap/progressbar";
 import { InventoryComponent } from './inventory/inventory.component';
+import { InventoryPageComponent } from './inventory-page/inventory-page.component';
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -15,11 +17,13 @@ import { InventoryComponent } from './inventory/inventory.component';
     AreaComponent,
     ActivityComponent,
     InventoryComponent,
+    InventoryPageComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+    FormsModule,
     ProgressbarModule.forRoot()
   ],
   providers: [],
