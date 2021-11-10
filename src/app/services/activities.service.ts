@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {DataService} from "./data.service";
-import {filter, map, Observable, of, switchMap} from "rxjs";
+import {filter, map, Observable, of, single, switchMap} from "rxjs";
 import {SchedulerService} from "./scheduler.service";
 
 @Injectable({
@@ -42,7 +42,16 @@ export class ActivitiesService {
   }
 
   startActivity(id: string) {
-    this.schedulerService
-      .addRepeatingTask('activity', id, 10);
+    this.getActivity(id)
+      .pipe(single())
+      .subscribe(activity => {
+        if (activity.time !== undefined) {
+          this.schedulerService
+            .addRepeatingTask('activity', id, activity.time || 0);
+        }
+        else {
+          console.warn(`no time set for ${activity.id}`);
+        }
+      })
   }
 }

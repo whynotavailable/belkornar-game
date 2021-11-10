@@ -90,7 +90,8 @@
           "id": "skill__mining"
         }
       ],
-      "group": "Mining"
+      "group": "Mining",
+      "time": 4
     },
     {
       "id": "process__create_copper_bar",
@@ -116,7 +117,8 @@
           "id": "skill__smithing"
         }
       ],
-      "group": "smithing"
+      "group": "smithing",
+      "time": 2
     },
     {
       "id": "process__smithing",

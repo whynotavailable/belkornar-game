@@ -36,6 +36,7 @@ interface Process {
   output?: Quantity[];
   group?: string;
   groups?: string[];
+  time?: number;
 }
 
 interface ExpDrop {
