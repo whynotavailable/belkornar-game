@@ -4,6 +4,7 @@ import {DataService} from "../services/data.service";
 import {ActivatedRoute} from "@angular/router";
 import {switchMap, tap} from "rxjs";
 import {ItemService} from "../services/item.service";
+import {InventoryService} from "../services/inventory.service";
 
 @Component({
   selector: 'app-person',
@@ -12,12 +13,15 @@ import {ItemService} from "../services/item.service";
 })
 export class PersonComponent implements OnInit {
   person: Person | null = null;
-  soldItems: Item[] = [];
+  soldItems: ItemWithCount[] = [];
+
+  amountMode = 'custom'
+  amountCustom = '1';
 
   currentSection: string = 'person'
 
   constructor(private activatedRoute: ActivatedRoute, private dataService: DataService, private personService: PersonService,
-              private itemService: ItemService) { }
+              private itemService: ItemService, private inventoryService: InventoryService) { }
 
   ngOnInit(): void {
     this.activatedRoute
@@ -29,8 +33,12 @@ export class PersonComponent implements OnInit {
         switchMap(person => this.itemService.getItems(person.sells?.map(x => x.id) || []))
       )
       .subscribe(items => {
-        this.soldItems = items;
-        this.currentSection = 'person'
+        this.soldItems = items.map(item => ({
+          ...item,
+          count: this.person?.sells?.first(x => x.id === item.id).count || 1
+        }));
+
+        this.currentSection = 'person';
       })
   }
 
@@ -38,4 +46,49 @@ export class PersonComponent implements OnInit {
     this.currentSection = section;
   }
 
+  // TODO: Get rid of this duplicate code
+  getCount(item: ItemWithCount) {
+    let count = parseInt(this.amountCustom);
+
+    if (this.amountMode === '10') {
+      count = 10;
+    }
+
+    count = count > item.count ? item.count : count;
+
+    if (this.amountMode === 'all') {
+      count = item.count;
+    }
+    return count;
+  }
+
+  sellItem(item: InventoryItem, count: number) {
+    let cost = Math.ceil((item.cost || 0) / 2) * count;
+    console.log(this.person)
+    console.log((this.person?.gold || 0 ) > cost)
+    if (this.person?.gold || 0 > cost) {
+      // TODO: make this return an observable so I can action off of it
+      this.inventoryService.tryUpdateInventory([{
+        id: item.id,
+        name: item.name,
+        change: 0 - count
+      }], cost)
+    }
+  }
+
+  buyItem(item: ItemWithCount) {
+    let count = this.getCount(item);
+    let cost = (item.cost || 0) * count;
+
+    this.inventoryService.tryUpdateInventory([{
+      id: item.id,
+      name: item.name,
+      change: count
+    }], 0 - cost)
+  }
+}
+
+
+interface ItemWithCount extends Item {
+  count: number
 }

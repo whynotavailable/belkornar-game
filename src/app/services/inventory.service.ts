@@ -2,23 +2,32 @@ import { Injectable } from '@angular/core';
 import {catchError, map, Observable, single, Subject} from "rxjs";
 import {ItemService} from "./item.service";
 import {SchedulerService} from "./scheduler.service";
+import {StorageService} from "./storage.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class InventoryService {
   maxSlots = 5; // make this changable via equipment later
+  gold: number = 0;
   inventory: InventoryItem[] = []
 
   inventoryChanges$: Subject<InventoryChange[]> = new Subject<InventoryChange[]>()
+  goldChanged$: Subject<number> = new Subject<number>();
 
-  constructor(private itemService: ItemService, private schedulerService: SchedulerService) { }
+  constructor(private itemService: ItemService, private schedulerService: SchedulerService,
+              private storageService: StorageService) {
+    this.load();
+  }
 
-  tryUpdateInventory(changes: InventoryChange[]) {
-    this.getTemporaryInventory(changes)
+  tryUpdateInventory(changes: InventoryChange[], gold: number = 0) {
+    this.getTemporaryInventory(changes, gold)
       .subscribe({
-        next: (inventory: InventoryItem[]) => {
+        next: ({inventory, gold}) => {
           this.inventory = inventory;
+          this.gold = gold;
+
+          this.persist();
           this.inventoryChanges$.next(changes);
         },
         error: err => {
@@ -27,11 +36,30 @@ export class InventoryService {
       })
   }
 
-  persist() {
+  tryUpdateGold(change: number) {
+    let newGold = this.gold + change;
+    if (newGold < 0) {
+      throw new Error('not enough gold');
+    }
 
+    this.gold = newGold;
+    this.goldChanged$.next(newGold);
   }
 
-  getTemporaryInventory(changes: InventoryChange[]): Observable<InventoryItem[]> {
+  persist() {
+    this.storageService.set('inventory', this.inventory);
+    this.storageService.set('gold', this.gold)
+  }
+
+  load() {
+    this.inventory = this.storageService.get('inventory', []);
+    this.gold = this.storageService.get('gold', 0);
+  }
+
+  getTemporaryInventory(changes: InventoryChange[], gold: number): Observable<{
+    inventory: InventoryItem[],
+    gold: number
+  }> {
     // apply the changes and check if the inventory is valid.
     // if it's not kill the current action also
     // TODO add success/error toastr
@@ -39,6 +67,11 @@ export class InventoryService {
     return this.itemService.getItems(changes.map(x => x.id))
       .pipe(single(), map(items => {
         let newInventory = this.inventory.map(x => ({...x}));
+
+        let newGold = this.gold + gold;
+        if (newGold < 0) {
+          throw new Error('not enough gold');
+        }
 
         for(let change of changes) {
           let itemInInventory = newInventory.first(x => x.id === change.id);
@@ -84,13 +117,16 @@ export class InventoryService {
         if (usedSlots > this.maxSlots) {
           throw new Error('Not enough room')
         }
-        return newInventory;
+        return {
+          inventory: newInventory,
+          gold: newGold
+        };
       }))
   }
 
   cancelChange(error: string) {
     // bro, how did this even happen
-    console.log('change cancelled');
+    console.log('change cancelled', error);
     this.schedulerService.clearTask();
   }
 }

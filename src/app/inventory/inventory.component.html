@@ -12,11 +12,18 @@
 <div *ngFor="let item of inventory" class="card" [class.border-primary]="isItemSelected(item.id)">
   <div class="card-body">
     {{item.name}}<br/>
-    Count: {{item.count}}
+    Count: {{item.count}}<br />
+    Value: {{getValue(item)}}
   </div>
   <div class="card-footer">
-    <!--<button (click)="selectItem(item.id)" class="btn btn-primary">Select</button>-->
-    <button *ngIf="item.type === 'equipment'" class="btn btn-secondary">Equip</button>
+    <ng-container *ngIf="customAction !== null">
+      <button class="btn btn-primary" (click)="customAction.action(item, getCount(item))">{{customAction.name}}</button>
+      &nbsp;
+    </ng-container>
+    <ng-container *ngIf="item.type === 'equipment'">
+      <button class="btn btn-secondary">Equip</button>
+      &nbsp;
+    </ng-container>
     <button (click)="dropItem(item.id)" class="btn btn-danger">Drop</button>
   </div>
 </div>

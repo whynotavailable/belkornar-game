@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {InventoryService} from "../services/inventory.service";
 import {Subscription} from "rxjs";
 
@@ -10,14 +10,16 @@ import {Subscription} from "rxjs";
 export class InventoryComponent implements OnInit, OnDestroy {
   inventorySub: Subscription | null = null;
 
+  @Input() customAction: CustomInventoryAction | null = null;
+
   @Output() selectedItems = new EventEmitter<InventoryItem[]>()
 
   _selectedItems: string[] = [];
 
   inventory: InventoryItem[] = [];
 
-  amountMode = 'all'
-  amountCustom = 1;
+  amountMode = 'custom'
+  amountCustom = '1';
 
   constructor(private inventoryService: InventoryService) { }
 
@@ -44,8 +46,12 @@ export class InventoryComponent implements OnInit, OnDestroy {
     }]);
   }
 
-  private getCount(item: InventoryItem) {
-    let count = this.amountCustom;
+  getValue(item: InventoryItem): number {
+    return Math.ceil((item.cost || 0) / 2) * this.getCount(item);
+  }
+
+  getCount(item: InventoryItem) {
+    let count = parseInt(this.amountCustom);
 
     if (this.amountMode === '10') {
       count = 10;

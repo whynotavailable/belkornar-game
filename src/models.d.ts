@@ -86,6 +86,13 @@ interface Person {
   name: string;
   sells?: PersonSell[];
   quote?: string;
+  gold?: number;
+}
+
+// for embedding buttons into child components
+interface CustomInventoryAction {
+  name: string,
+  action: (item: InventoryItem, count: number) => void;
 }
 
 interface PersonSell {

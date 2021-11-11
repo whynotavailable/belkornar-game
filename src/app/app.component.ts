@@ -4,6 +4,7 @@ import {AreaService} from "./services/area.service";
 import {combineLatest, combineLatestWith, Subscription, switchMap} from "rxjs";
 import {ActivitiesService} from "./services/activities.service";
 import {PersonService} from "./services/person.service";
+import {InventoryService} from "./services/inventory.service";
 
 @Component({
   selector: 'app-root',
@@ -20,9 +21,12 @@ export class AppComponent implements OnInit, OnDestroy {
   activitiesSub: Subscription | null = null;
   areaSub: Subscription | null = null;
   peopleSub: Subscription | null = null;
+  goldSub: Subscription | null = null;
+
+  gold: number = 0;
 
   constructor(private areaService: AreaService, private activitiesService: ActivitiesService,
-              private personService: PersonService) {
+              private personService: PersonService, private inventoryService: InventoryService) {
 
   }
 
@@ -50,6 +54,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.areaSub = this.areaService.getAreaData()
       .subscribe(area => this.currentArea = area.name)
+
+    this.gold = this.inventoryService.gold;
+
+    this.goldSub = this.inventoryService.inventoryChanges$
+      .subscribe(gold => {
+        this.gold = this.inventoryService.gold;
+      })
   }
 
   ngOnDestroy(): void {
