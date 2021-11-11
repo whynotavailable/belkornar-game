@@ -12,4 +12,7 @@ export class AreaComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  purge() {
+    localStorage.clear();
+  }
 }
