@@ -8,7 +8,7 @@ import {StorageService} from "./storage.service";
   providedIn: 'root'
 })
 export class InventoryService {
-  maxSlots = 5; // make this changable via equipment later
+  maxSlots = 10; // make this changable via equipment later
   gold: number = 0;
   inventory: InventoryItem[] = []
 
@@ -20,9 +20,23 @@ export class InventoryService {
     this.load();
   }
 
-  tryUpdateInventory(changes: InventoryChange[], gold: number = 0) {
-    this.getTemporaryInventory(changes, gold)
-      .subscribe({
+  tryUpdateInventory(changes: InventoryChange[], gold: number = 0): Observable<boolean> {
+    return this.getTemporaryInventory(changes, gold)
+      .pipe(
+        catchError(err => {
+          this.cancelChange(err);
+          // rethrow so the map doesn't happen
+          throw err;
+        }),
+        map(({inventory, gold}) => {
+          this.inventory = inventory;
+          this.gold = gold;
+
+          this.persist();
+          this.inventoryChanges$.next(changes);
+          return true;
+      }))
+      /*.subscribe({
         next: ({inventory, gold}) => {
           this.inventory = inventory;
           this.gold = gold;
@@ -33,7 +47,7 @@ export class InventoryService {
         error: err => {
           this.cancelChange(err)
         }
-      })
+      })*/
   }
 
   tryUpdateGold(change: number) {

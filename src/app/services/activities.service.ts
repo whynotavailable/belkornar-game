@@ -32,7 +32,7 @@ export class ActivitiesService {
             id: output.id,
             change: (output.amount || 1)
           })
-          inventoryService.tryUpdateInventory(inventoryChanges);
+          inventoryService.tryUpdateInventory(inventoryChanges).subscribe();
         }
       })
   }

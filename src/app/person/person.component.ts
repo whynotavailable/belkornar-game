@@ -12,7 +12,7 @@ import {InventoryService} from "../services/inventory.service";
   styleUrls: ['./person.component.scss']
 })
 export class PersonComponent implements OnInit {
-  person: Person | null = null;
+  person: Person = <Person><any>null;
   soldItems: ItemWithCount[] = [];
 
   amountMode = 'custom'
@@ -64,15 +64,22 @@ export class PersonComponent implements OnInit {
 
   sellItem(item: InventoryItem, count: number) {
     let cost = Math.ceil((item.cost || 0) / 2) * count;
-    console.log(this.person)
-    console.log((this.person?.gold || 0 ) > cost)
-    if (this.person?.gold || 0 > cost) {
+    console.log((this.person.gold || 0 ) > cost)
+    if (this.person.gold || 0 > cost) {
       // TODO: make this return an observable so I can action off of it
       this.inventoryService.tryUpdateInventory([{
         id: item.id,
         name: item.name,
         change: 0 - count
       }], cost)
+        .subscribe(() => {
+          // literally just to get ts off my back
+          if (this.person.gold !== undefined) {
+            this.person.gold -= cost;
+          }
+
+          // TODO: update the sellers inventory with sold items.
+        })
     }
   }
 
@@ -84,7 +91,13 @@ export class PersonComponent implements OnInit {
       id: item.id,
       name: item.name,
       change: count
-    }], 0 - cost)
+    }], 0 - cost).subscribe(() => {
+      if (this.person.gold !== undefined) {
+        this.person.gold += cost;
+      }
+
+      item.count -= count;
+    })
   }
 }
 
