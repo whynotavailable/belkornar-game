@@ -1,8 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {DataService} from "./services/data.service";
 import {AreaService} from "./services/area.service";
-import {combineLatest, Subscription, switchMap} from "rxjs";
+import {combineLatest, combineLatestWith, Subscription, switchMap} from "rxjs";
 import {ActivitiesService} from "./services/activities.service";
+import {PersonService} from "./services/person.service";
 
 @Component({
   selector: 'app-root',
@@ -13,12 +14,15 @@ export class AppComponent implements OnInit, OnDestroy {
   title = 'belkornar';
 
   activities: Process[] = [];
+  people: Person[] = [];
 
   currentArea: string = '';
   activitiesSub: Subscription | null = null;
   areaSub: Subscription | null = null;
+  peopleSub: Subscription | null = null;
 
-  constructor(private areaService: AreaService, private activitiesService: ActivitiesService) {
+  constructor(private areaService: AreaService, private activitiesService: ActivitiesService,
+              private personService: PersonService) {
 
   }
 
@@ -34,10 +38,14 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.activitiesSub = this.areaService.getAreaData()
       .pipe(switchMap(area => {
-        return this.activitiesService.getActivities(area.activities || []);
+        return combineLatest([
+          this.activitiesService.getActivities(area.activities || []),
+          this.personService.getPeople(area.people || [])
+        ])
       }))
-      .subscribe(activities => {
+      .subscribe(([activities, people]) => {
         this.activities = activities;
+        this.people = people;
       })
 
     this.areaSub = this.areaService.getAreaData()

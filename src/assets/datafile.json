@@ -61,7 +61,7 @@
   "people": [
     {
       "id": "people__hat_seller",
-      "name": "hat seller",
+      "name": "Hat Seller",
       "sells": [
         {
           "id": "item__hat",

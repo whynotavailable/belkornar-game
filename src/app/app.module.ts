@@ -10,6 +10,7 @@ import { ProgressbarModule } from "ngx-bootstrap/progressbar";
 import { InventoryComponent } from './inventory/inventory.component';
 import { InventoryPageComponent } from './inventory-page/inventory-page.component';
 import {FormsModule} from "@angular/forms";
+import { PersonComponent } from './person/person.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import {FormsModule} from "@angular/forms";
     ActivityComponent,
     InventoryComponent,
     InventoryPageComponent,
+    PersonComponent,
   ],
   imports: [
     BrowserModule,

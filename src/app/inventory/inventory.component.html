@@ -15,7 +15,7 @@
     Count: {{item.count}}
   </div>
   <div class="card-footer">
-    <button (click)="selectItem(item.id)" class="btn btn-primary">Select</button>
+    <!--<button (click)="selectItem(item.id)" class="btn btn-primary">Select</button>-->
     <button *ngIf="item.type === 'equipment'" class="btn btn-secondary">Equip</button>
     <button (click)="dropItem(item.id)" class="btn btn-danger">Drop</button>
   </div>

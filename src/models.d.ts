@@ -2,6 +2,7 @@ interface DataFile {
   areas: Area[];
   processes: Process[];
   items: Item[];
+  people: Person[];
 }
 
 interface ScheduledTask {
@@ -80,7 +81,26 @@ interface Requirement {
   id: string;
 }
 
+interface Person {
+  id: string;
+  name: string;
+  sells?: PersonSell[];
+}
+
+interface PersonSell {
+  id: string;
+  count: number;
+}
+
 declare interface Array<T> {
   first(predicate: (value: T) => boolean): T;
   remove(predicate: (value: T) => boolean): Array<T>;
 }
+
+/*
+id: hat_seller
+name: hat seller
+sells:
+  - id: item__hat
+    count: 5
+ */

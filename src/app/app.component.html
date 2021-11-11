@@ -27,11 +27,10 @@
           <span>People</span>
         </h6>
         <ul class="nav flex-column mb-2">
-          <li *ngFor="let activity of activities" class="nav-item">
+          <li *ngFor="let person of people" class="nav-item">
 
-            <a [routerLink]="getLink(activity)" class="nav-link">
-              <span *ngIf="activity.group === undefined">{{activity.name}}</span>
-              <span *ngIf="activity.group !== undefined">{{activity.group}}</span>
+            <a [routerLink]="'person/' + person.id" class="nav-link">
+              <span>{{person.name}}</span>
             </a>
           </li>
         </ul>
