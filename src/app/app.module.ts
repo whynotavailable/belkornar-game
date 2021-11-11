@@ -11,6 +11,7 @@ import { InventoryComponent } from './inventory/inventory.component';
 import { InventoryPageComponent } from './inventory-page/inventory-page.component';
 import {FormsModule} from "@angular/forms";
 import { PersonComponent } from './person/person.component';
+import { EquipmentComponent } from './equipment/equipment.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { PersonComponent } from './person/person.component';
     InventoryComponent,
     InventoryPageComponent,
     PersonComponent,
+    EquipmentComponent,
   ],
   imports: [
     BrowserModule,

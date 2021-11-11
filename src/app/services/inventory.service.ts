@@ -4,6 +4,23 @@ import {ItemService} from "./item.service";
 import {SchedulerService} from "./scheduler.service";
 import {StorageService} from "./storage.service";
 
+/**
+ * Equipment Slots
+ * Helmet
+ * Body
+ * Legs
+ * Boots
+ * Gloves
+ * Main Hand
+ * Off Hand
+ * Ammo
+ * Neck
+ * Ring 1
+ * Ring 2
+ * Backpack
+ * Back
+ */
+
 @Injectable({
   providedIn: 'root'
 })
@@ -142,5 +159,23 @@ export class InventoryService {
     // bro, how did this even happen
     console.log('change cancelled', error);
     this.schedulerService.clearTask();
+  }
+
+  static getSlots(): Record<string, string> {
+    return {
+      helmet: 'Helmet',
+      body: 'Body',
+      legs: 'Legs',
+      boots: 'Boots',
+      gloves: 'Gloves',
+      main_hand: 'Main Hand',
+      off_hand: 'Off Hand',
+      ammo: 'Ammo',
+      neck: 'Neck',
+      ring1: 'Ring 1',
+      ring2: 'Ring 2',
+      backpack: 'Backpack',
+      back: 'Back',
+    }
   }
 }
