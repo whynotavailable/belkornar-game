@@ -27,6 +27,10 @@ export class InventoryService {
       })
   }
 
+  persist() {
+
+  }
+
   getTemporaryInventory(changes: InventoryChange[]): Observable<InventoryItem[]> {
     // apply the changes and check if the inventory is valid.
     // if it's not kill the current action also

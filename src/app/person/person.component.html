@@ -1,16 +1,31 @@
-<div class="row content">
+<div *ngIf="person !== null" class="row content">
   <div class="col-md-12">
     <ul class="nav nav-pills">
       <li class="nav-item">
-        <span class="nav-link">Guy's name</span>
+        <span (click)="setSection('person')" class="nav-link" [class.active]="currentSection === 'person'">{{person.name}}</span>
       </li>
       <li class="nav-item">
-        <span class="nav-link">Trade</span>
+        <span (click)="setSection('trade')" class="nav-link" [class.active]="currentSection === 'trade'" [class.disabled]="(person.sells || []).length === 0">Trade</span>
       </li>
     </ul>
     <hr>
-    <div class="row">
-
+    <div class="row" *ngIf="currentSection === 'person'">
+      <figure>
+        <blockquote class="blockquote">
+          <p>{{person.quote}}</p>
+        </blockquote>
+        <figcaption class="blockquote-footer">
+          {{person.name}}
+        </figcaption>
+      </figure>
+    </div>
+    <div class="row" *ngIf="currentSection === 'trade'">
+      <div class="col-md-4">
+        hi
+      </div>
+      <div class="col-md-4">
+        <app-inventory></app-inventory>
+      </div>
     </div>
   </div>
 </div>

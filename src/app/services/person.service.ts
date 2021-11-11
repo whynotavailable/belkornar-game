@@ -14,4 +14,10 @@ export class PersonService {
       return data.people.filter(x => ids.indexOf(x.id) !== -1);
     }));
   }
+
+  getPerson(id: string): Observable<Person> {
+    return this.dataService.data$.pipe(map(data => {
+      return data.people.first(x => x.id === id);
+    }));
+  }
 }

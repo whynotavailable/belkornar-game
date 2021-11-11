@@ -85,6 +85,7 @@ interface Person {
   id: string;
   name: string;
   sells?: PersonSell[];
+  quote?: string;
 }
 
 interface PersonSell {
