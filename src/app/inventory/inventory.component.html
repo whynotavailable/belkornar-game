@@ -21,7 +21,7 @@
       &nbsp;
     </ng-container>
     <ng-container *ngIf="item.type === 'equipment'">
-      <button class="btn btn-secondary">Equip</button>
+      <button (click)="equipItem(item.id)" class="btn btn-secondary">Equip</button>
       &nbsp;
     </ng-container>
     <button (click)="dropItem(item.id)" class="btn btn-danger">Drop</button>

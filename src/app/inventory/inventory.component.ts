@@ -43,7 +43,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     this.inventoryService.tryUpdateInventory([{
       id: item.id,
       change: 0 - count
-    }]);
+    }]).subscribe();
   }
 
   getValue(item: InventoryItem): number {
@@ -63,6 +63,10 @@ export class InventoryComponent implements OnInit, OnDestroy {
       count = item.count;
     }
     return count;
+  }
+
+  equipItem(id: string) {
+    this.inventoryService.tryEquipItem(id);
   }
 
   ngOnInit(): void {

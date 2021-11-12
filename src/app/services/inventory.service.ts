@@ -27,10 +27,13 @@ import {StorageService} from "./storage.service";
 export class InventoryService {
   maxSlots = 10; // make this changable via equipment later
   gold: number = 0;
-  inventory: InventoryItem[] = []
+  inventory: InventoryItem[] = [];
+
+  equipment: Record<string, InventoryItem | null> = {};
 
   inventoryChanges$: Subject<InventoryChange[]> = new Subject<InventoryChange[]>()
   goldChanged$: Subject<number> = new Subject<number>();
+  equipmentChanged$: Subject<1> = new Subject<1>();
 
   constructor(private itemService: ItemService, private schedulerService: SchedulerService,
               private storageService: StorageService) {
@@ -78,13 +81,22 @@ export class InventoryService {
   }
 
   persist() {
+    this.storageService.set('equipment', this.equipment);
     this.storageService.set('inventory', this.inventory);
     this.storageService.set('gold', this.gold)
   }
 
   load() {
+    this.equipment = this.storageService.get('equipment', {});
     this.inventory = this.storageService.get('inventory', []);
     this.gold = this.storageService.get('gold', 0);
+
+    // fill the rest of the inventory slots with null to clean up the data.
+    for (let slot of Object.keys(this.equipmentSlots)) {
+      if (this.equipment[slot] === undefined) {
+        this.equipment[slot] = null;
+      }
+    }
   }
 
   getTemporaryInventory(changes: InventoryChange[], gold: number): Observable<{
@@ -161,9 +173,72 @@ export class InventoryService {
     this.schedulerService.clearTask();
   }
 
-  static getSlots(): Record<string, string> {
+  tryUnEquipItem(slot: string) {
+    let currentItem = this.equipment[slot];
+
+    if (currentItem === null) {
+      return;
+    }
+
+    let changes: InventoryChange[] = [
+      {
+        id: currentItem.id,
+        name: currentItem.name,
+        change: 1
+      }
+    ]
+
+    this.tryUpdateInventory(changes)
+      .subscribe(() => {
+        this.equipment[slot] = null
+        this.persist()
+        this.equipmentChanged$.next(1);
+      });
+  }
+
+  tryEquipItem(id: string) {
+    let item = this.inventory.first(x =>  x.id === id);
+
+    if (item.type !== 'equipment') {
+      // lol no thanks
+      return;
+    }
+
+    if (item === null) {
+      return;
+    }
+
+    let slot = item.slot || ''; // this is just to get ts off my back
+
+    let changes: InventoryChange[] = [
+      {
+        id: item.id,
+        name: item.name,
+        change: -1
+      }
+    ]
+
+    let currentItem = this.equipment[slot];
+
+    if (currentItem !== null && currentItem !== undefined) {
+      changes.push({
+        id: currentItem.id,
+        name: currentItem.name,
+        change: 1
+      })
+    }
+
+    this.tryUpdateInventory(changes)
+      .subscribe(() => {
+        this.equipment[slot] = item
+        this.persist()
+        this.equipmentChanged$.next(1);
+      });
+  }
+
+  get equipmentSlots(): Record<string, string> {
     return {
-      helmet: 'Helmet',
+      head: 'Head',
       body: 'Body',
       legs: 'Legs',
       boots: 'Boots',
